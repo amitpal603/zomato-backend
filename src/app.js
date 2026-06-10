@@ -11,4 +11,5 @@ app.use(helmet())
 // Routes
 
 app.use('/api/auth' , authRoutes)
+
 module.exports = app

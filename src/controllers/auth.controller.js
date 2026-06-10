@@ -104,3 +104,25 @@ exports.UserLogin = async (req, res) => {
         res.status(500).json({ message: "Error logging in user" })
     }
 }
+
+/**
+ * 
+ * @route POST /api/auth/user/logout
+ * @desc Logout a user
+ * @access Private
+ */
+exports.userLogout = async (req , res) => {
+    try {
+        const {_id} = req.userInfo
+
+        res.clearCookie('accessToken')
+        res.clearCookie('refreshToken')
+
+        await User.findByIdAndUpdate(_id , { refreshToken : null })
+
+        res.status(200).json({ message: "User logged out successfully" })
+    } catch (error) {
+        console.error("Error logging out user:", error)
+        res.status(500).json({ message: "Error logging out user" })
+    }
+}
