@@ -82,7 +82,8 @@ exports.UserLogin = async (req, res) => {
         }
         const payload = {
             _id : user._id,
-            email : user.email
+            email : user.email,
+            fullName : user.fullName
         }
         const { accessToken, refreshToken } = generateAccessToken(payload)
         user.refreshToken = refreshToken
@@ -113,14 +114,14 @@ exports.UserLogin = async (req, res) => {
  */
 exports.userLogout = async (req , res) => {
     try {
-        const {_id} = req.userInfo
+        const {_id , fullName} = req.userInfo
 
         res.clearCookie('accessToken')
         res.clearCookie('refreshToken')
 
-      const user =   await User.findByIdAndUpdate(_id , { refreshToken : null })
+     await User.findByIdAndUpdate(_id , { refreshToken : null })
 
-        res.status(200).json({ message: `${user.fullName} logged out successfully` })
+        res.status(200).json({ message: `${fullName} logged out successfully` })
     } catch (error) {
         console.error("Error logging out user:", error)
         res.status(500).json({ message: "Error logging out user" })
@@ -206,7 +207,8 @@ exports.foodPartnerLogin = async (req, res) => {
         }
         const payload = {
             _id : foodPartner._id,
-            email : foodPartner.email
+            email : foodPartner.email,
+            name : foodPartner.name
         }
         const { accessToken, refreshToken } = generateAccessToken(payload)
         foodPartner.refreshToken = refreshToken
@@ -236,14 +238,14 @@ exports.foodPartnerLogin = async (req, res) => {
  */
 exports.foodPartnerLogout = async (req, res) => {
     try {
-        const {_id} = req.userInfo
+        const {_id , name} = req.foodPartnerInfo
        
         res.clearCookie('accessToken')
         res.clearCookie('refreshToken')
 
-      const FoodPartnerName = await FoodPartner.findByIdAndUpdate(_id , { refreshToken : null })
+       const foodPartner = await FoodPartner.findByIdAndUpdate(_id , { refreshToken : null })
 
-        res.status(200).json({ message: `${FoodPartnerName.name} logged out successfully` })
+        res.status(200).json({ message: `${name} logged out successfully` })
     } catch (error) {
         console.error("Error logging out food partner:", error)
         res.status(500).json({ message: "Error logging out food partner" })

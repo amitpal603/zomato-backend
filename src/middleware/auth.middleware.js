@@ -11,11 +11,12 @@ const authMiddleware = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_SECRET_TOKEN )
-        
-        
-        
-        req.userInfo = decoded
-        
+        const user = await User.findById({_id : decoded._id}).select('-password -refreshToken')
+
+        if(!user) {
+            return res.status(401).json({ message: "User not found" })
+        }
+       req.userInfo = user
         next()
     } catch (error) {
         console.error(error)
