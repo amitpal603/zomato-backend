@@ -1,6 +1,6 @@
 const User = require('../models/user.model')
 const { generateAccessToken } = require('../utils/accessToken.util')
-
+const FoodPartner = require('../models/foodPartner.model')
 
 /**
  * @route POST /api/auth/user/register
@@ -118,9 +118,9 @@ exports.userLogout = async (req , res) => {
         res.clearCookie('accessToken')
         res.clearCookie('refreshToken')
 
-        await User.findByIdAndUpdate(_id , { refreshToken : null })
+      const user =   await User.findByIdAndUpdate(_id , { refreshToken : null })
 
-        res.status(200).json({ message: `${req.userInfo.fullName} logged out successfully` })
+        res.status(200).json({ message: `${user.fullName} logged out successfully` })
     } catch (error) {
         console.error("Error logging out user:", error)
         res.status(500).json({ message: "Error logging out user" })
@@ -152,12 +152,11 @@ exports.foodPartnerRegister = async (req, res) => {
 
         const payload = {
             _id : newFoodPartner._id,
-            name : newFoodPartner.name,
             email : newFoodPartner.email
         }
         const {accessToken , refreshToken}= generateAccessToken(payload)
          newFoodPartner.refreshToken = refreshToken;
-
+        await newFoodPartner.save()
          const options = {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -238,13 +237,13 @@ exports.foodPartnerLogin = async (req, res) => {
 exports.foodPartnerLogout = async (req, res) => {
     try {
         const {_id} = req.userInfo
-
+       
         res.clearCookie('accessToken')
         res.clearCookie('refreshToken')
 
-        await FoodPartner.findByIdAndUpdate(_id , { refreshToken : null })
+      const FoodPartnerName = await FoodPartner.findByIdAndUpdate(_id , { refreshToken : null })
 
-        res.status(200).json({ message: `${req.userInfo.name} logged out successfully` })
+        res.status(200).json({ message: `${FoodPartnerName.name} logged out successfully` })
     } catch (error) {
         console.error("Error logging out food partner:", error)
         res.status(500).json({ message: "Error logging out food partner" })
