@@ -13,8 +13,12 @@ const foodSchema = new Schema({
     },
     videoUrl : {
         type : String,
-        trim : true,
+        default : null
         
+    },
+    videoPublicId : {
+        type : String,
+        default : null
     },
     vendor : {
         type : Schema.Types.ObjectId,
